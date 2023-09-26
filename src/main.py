@@ -16,7 +16,7 @@ def fetch_data() -> bytes:
     exit(1)
 
 def save_data(data: bytes) -> None:
-    with open("icalFile.ics", "wb") as ical_file: 
+    with open("../icalFile.ics", "wb") as ical_file: 
         ical_file.write(data)
 
 if __name__ == "__main__":
