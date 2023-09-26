@@ -5,7 +5,18 @@
 $ pip install -r requirements.txt
 ```
 
+or 
+```bash
+$ make install
+```
+
+
 ## Run Code
 ```bash
 $ python src/main.py
+```
+
+or 
+```bash
+$ make run
 ```
