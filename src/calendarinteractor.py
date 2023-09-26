@@ -7,48 +7,48 @@ from googleapiclient.errors import HttpError
 
 import os
 
-SCOPES = ["https://www.googleapis.com/auth/calendar"]
-TOKEN_FILE_PATH = "token.json"
+class CalendarInteractor:
+    SCOPES = ["https://www.googleapis.com/auth/calendar"]
+    TOKEN_FILE_PATH = "token.json"
 
-def fetch_credentials() -> Credentials:
+    def fetch_credentials(self) -> Credentials:
+        credentials = None
 
-    def no_credentials(credentials: Credentials) -> bool:
+        if os.path.exists(self.TOKEN_FILE_PATH):
+            credentials = Credentials.from_authorized_user_file(self.TOKEN_FILE_PATH)
+
+        if self.__no_credentials(credentials):
+            credentials = self.__fetch_credentials(credentials)
+            self.__save_to_file(credentials)
+
+        return credentials
+    
+    def __no_credentials(self, credentials: Credentials) -> bool:
         return not credentials or not credentials.valid
 
-    def fetch_credentials(credentials: Credentials) -> Credentials:
+    def __fetch_credentials(self, credentials: Credentials) -> Credentials:
         if credentials and credentials.expired and credentials.refresh_token:
             credentials.refresh(Request())
         else:
-            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
+            flow = InstalledAppFlow.from_client_secrets_file("credentials.json", self.SCOPES)
             credentials = flow.run_local_server(port=0)
 
         return credentials
 
-    def save_to_file(credentials: Credentials) -> None: 
-        with open(TOKEN_FILE_PATH, "w") as token_file:
+    def __save_to_file(self, credentials: Credentials) -> None: 
+        with open(self.TOKEN_FILE_PATH, "w") as token_file:
             token_file.write(credentials.to_json())
 
-    credentials = None
+    def build_service(self, credentials: Credentials) -> Resource:
+        try:
+            return build('calendar', 'v3', credentials=credentials)
+        except HttpError as error:
+            print(error)
+            exit(1)
 
-    if os.path.exists(TOKEN_FILE_PATH):
-        credentials = Credentials.from_authorized_user_file(TOKEN_FILE_PATH)
+    def get_calendar_id(self, service: Resource, calendar_name: str) -> str:
+        calendars = service.calendarList().list().execute()
+        return next((calendar["id"] for calendar in calendars["items"] if calendar["summary"] == calendar_name), None)
 
-    if no_credentials(credentials):
-        credentials = fetch_credentials(credentials)
-        save_to_file(credentials)
-
-    return credentials
-
-def build_service(credentials: Credentials) -> Resource:
-    try:
-        return build('calendar', 'v3', credentials=credentials)
-    except HttpError as error:
-        print(error)
-        exit(1)
-
-def get_calendar_id(service: Resource, calendar_name: str) -> str:
-    calendars = service.calendarList().list().execute()
-    return next((calendar["id"] for calendar in calendars["items"] if calendar["summary"] == calendar_name), None)
-
-def insert_event(event: Event, service: Resource, calendar_id: str) -> None:
-    service.events().insert(calendarId=calendar_id, body=event.parse()).execute()
+    def insert_event(self, event: Event, service: Resource, calendar_id: str) -> None:
+        service.events().insert(calendarId=calendar_id, body=event.parse()).execute()

@@ -1,4 +1,4 @@
-from calendarinteractor import fetch_credentials, build_service, get_calendar_id
+from calendarinteractor import CalendarInteractor
 from icalparser import IcalParser
 
 import os
@@ -6,6 +6,7 @@ import os
 if __name__ == "__main__":
     ical_parser = IcalParser()
     ical_parser.fetch_data()
-    credentials = fetch_credentials()
-    service = build_service(credentials)
-    calendar_id = get_calendar_id(service, os.getenv("CALENDAR_NAME"))
+    calendar_interactor = CalendarInteractor()
+    credentials = calendar_interactor.fetch_credentials()
+    service = calendar_interactor.build_service(credentials)
+    calendar_id = calendar_interactor.get_calendar_id(service, os.getenv("CALENDAR_NAME"))
