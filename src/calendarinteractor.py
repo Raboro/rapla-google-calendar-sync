@@ -1,6 +1,9 @@
+from event import Event
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build, Resource
+from googleapiclient.errors import HttpError
 
 import os
 
@@ -35,3 +38,17 @@ def fetch_credentials() -> Credentials:
         save_to_file(credentials)
 
     return credentials
+
+def build_service(credentials: Credentials) -> Resource:
+    try:
+        return build('calendar', 'v3', credentials=credentials)
+    except HttpError as error:
+        print(error)
+        exit(1)
+
+def get_calendar_id(service: Resource, calendar_name: str) -> str:
+    calendars = service.calendarList().list().execute()
+    return next((calendar["id"] for calendar in calendars["items"] if calendar["summary"] == calendar_name), None)
+
+def insert_event(event: Event, service: Resource, calendar_id: str) -> None:
+    service.events().insert(calendarId=calendar_id, body=event.parse()).execute()

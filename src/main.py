@@ -1,4 +1,6 @@
 from dotenv import load_dotenv
+from calendarinteractor import fetch_credentials, build_service, get_calendar_id, load
+
 import os
 import urllib3
 
@@ -21,3 +23,6 @@ def save_data(data: bytes) -> None:
 
 if __name__ == "__main__":
     load_data()
+    credentials = fetch_credentials()
+    service = build_service(credentials)
+    calendar_id = get_calendar_id(service, os.getenv("CALENDAR_NAME"))
