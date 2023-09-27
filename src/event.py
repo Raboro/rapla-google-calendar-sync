@@ -25,19 +25,19 @@ class Event:
             "summary": self.summary,
             "description": self.description,
             "colorId": self.color_id,
-            "start": {
-                "dateTime": self.__to_rfc3339(self.start),
-                "timeZone": time_zone
-            },
-            "end": {
-                "dateTime": self.__to_rfc3339(self.end),
-                "timeZone": time_zone
-            },
+            "start": self.__construct_time_element(self.start, time_zone),
+            "end": self.__construct_time_element(self.end, time_zone),
             "location": self.location
         }
         if (self.recurrence != ""):
             event["recurrence"] = ["RRULE:" + self.recurrence]
         return event
+
+    def __construct_time_element(self, time: str, time_zone: str) -> dict[str, str]:
+        return {
+            "dateTime": self.__to_rfc3339(time),
+            "timeZone": time_zone
+        }
 
     def __to_rfc3339(self, time: str) -> str:
         if not time.endswith("Z"):
