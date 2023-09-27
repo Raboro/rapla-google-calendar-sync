@@ -8,6 +8,7 @@ import pytz
 
 load_dotenv()
 
+TIME_ZONE = os.getenv("TIME_ZONE")
 
 @dataclass(frozen=True)
 class Event:
@@ -20,23 +21,22 @@ class Event:
     recurrence: str
 
     def parse(self) -> dict[str, str | int]:
-        time_zone = os.getenv("TIME_ZONE")
         event = {
             "summary": self.summary,
             "description": self.description,
             "colorId": self.color_id,
-            "start": self.__construct_time_element(self.start, time_zone),
-            "end": self.__construct_time_element(self.end, time_zone),
+            "start": self.__construct_time_element(self.start),
+            "end": self.__construct_time_element(self.end),
             "location": self.location
         }
         if (self.recurrence != ""):
             event["recurrence"] = ["RRULE:" + self.recurrence]
         return event
 
-    def __construct_time_element(self, time: str, time_zone: str) -> dict[str, str]:
+    def __construct_time_element(self, time: str) -> dict[str, str]:
         return {
             "dateTime": self.__to_rfc3339(time),
-            "timeZone": time_zone
+            "timeZone": TIME_ZONE
         }
 
     def __to_rfc3339(self, time: str) -> str:
