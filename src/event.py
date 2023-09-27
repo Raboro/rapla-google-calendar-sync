@@ -20,17 +20,18 @@ class Event:
     recurrence: str
 
     def parse(self) -> dict[str, str | int]:
+        time_zone = os.getenv("TIME_ZONE")
         event = {
             "summary": self.summary,
             "description": self.description,
             "colorId": self.color_id,
             "start": {
                 "dateTime": self.__to_rfc3339(self.start),
-                "timeZone": os.getenv("TIME_ZONE")
+                "timeZone": time_zone
             },
             "end": {
                 "dateTime": self.__to_rfc3339(self.end),
-                "timeZone": os.getenv("TIME_ZONE")
+                "timeZone": time_zone
             },
             "location": self.location
         }
