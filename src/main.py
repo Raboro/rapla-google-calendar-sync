@@ -11,3 +11,5 @@ if __name__ == "__main__":
     credentials = calendar_interactor.fetch_credentials()
     service = calendar_interactor.build_service(credentials)
     calendar_id = calendar_interactor.get_calendar_id(service, os.getenv("CALENDAR_NAME"))
+    for event in ical_parser.construct_events():
+        calendar_interactor.insert_event(event, service, calendar_id)
