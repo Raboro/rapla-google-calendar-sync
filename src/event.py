@@ -20,7 +20,7 @@ class Event:
     recurrence: str
 
     def parse(self) -> dict[str, str | int]:
-        return {
+        event = {
             "summary": self.summary,
             "description": self.description,
             "colorId": self.color_id,
@@ -32,10 +32,14 @@ class Event:
                 "dateTime": self.__to_rfc3339(self.end),
                 "timeZone": os.getenv("TIME_ZONE")
             },
-            "location": self.location,
-            "recurrence": [self.recurrence]
+            "location": self.location
         }
+        if (self.recurrence != ""):
+            event["recurrence"] = ["RRULE:" + self.recurrence]
+        return event
 
     def __to_rfc3339(self, time: str) -> str:
+        if not time.endswith("Z"):
+            time += "Z"
         datetime_obj = datetime.strptime(time, "%Y%m%dT%H%M%SZ")
         return datetime_obj.replace(tzinfo=pytz.UTC).isoformat().replace("+00:00", "+02:00")
