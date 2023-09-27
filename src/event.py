@@ -5,12 +5,13 @@ import os
 
 load_dotenv()
 
+
 @dataclass(frozen=True)
-class Event():
+class Event:
     summary: str
     description: str
-    color_id: int 
-    start: str 
+    color_id: int
+    start: str
     end: str
 
     def parse(self) -> dict[str, str | int]:
@@ -26,4 +27,4 @@ class Event():
                 "dateTime": self.end,
                 "timeZone": os.getenv("TINE_ZONE")
             }
-        } 
+        }

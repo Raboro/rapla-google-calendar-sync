@@ -7,6 +7,7 @@ from googleapiclient.errors import HttpError
 
 import os
 
+
 class CalendarInteractor:
     SCOPES = ["https://www.googleapis.com/auth/calendar"]
     TOKEN_FILE_PATH = "token.json"
@@ -22,7 +23,7 @@ class CalendarInteractor:
             self.__save_to_file(credentials)
 
         return credentials
-    
+
     def __no_credentials(self, credentials: Credentials) -> bool:
         return not credentials or not credentials.valid
 
@@ -35,7 +36,7 @@ class CalendarInteractor:
 
         return credentials
 
-    def __save_to_file(self, credentials: Credentials) -> None: 
+    def __save_to_file(self, credentials: Credentials) -> None:
         with open(self.TOKEN_FILE_PATH, "w") as token_file:
             token_file.write(credentials.to_json())
 

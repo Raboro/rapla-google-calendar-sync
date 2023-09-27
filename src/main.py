@@ -3,6 +3,7 @@ from icalparser import IcalParser
 
 import os
 
+
 if __name__ == "__main__":
     ical_parser = IcalParser()
     ical_parser.fetch_data()
