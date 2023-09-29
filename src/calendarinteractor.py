@@ -50,6 +50,9 @@ class CalendarInteractor:
     def get_calendar_id(self, service: Resource, calendar_name: str) -> str:
         calendars = service.calendarList().list().execute()
         return next((calendar["id"] for calendar in calendars["items"] if calendar["summary"] == calendar_name), None)
+ 
+    def fetch_all_events(self, service: Resource, calendar_id: str) -> None:
+        return service.events().list(calendarId=calendar_id).execute().get("items", [])
 
     def insert_event(self, event: Event, service: Resource, calendar_id: str) -> None:
         service.events().insert(calendarId=calendar_id, body=event.parse()).execute()
