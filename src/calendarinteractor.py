@@ -55,7 +55,7 @@ class CalendarInteractor:
  
     def fetch_all_events(self, service: Resource, calendar_id: str) -> list[EventDTO]:
         events = service.events().list(calendarId=calendar_id).execute().get("items", [])
-        return [EventDTO.from_dict(event) for event in events]
+        return [EventDTO.from_dict(event) for event in events if event["status"] == "confirmed"]
 
     def insert_event(self, event: Event, service: Resource, calendar_id: str) -> None:
         service.events().insert(calendarId=calendar_id, body=event.parse()).execute()
