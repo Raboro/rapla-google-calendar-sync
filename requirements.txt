@@ -1,4 +1,4 @@
-urllib3==2.0.5
+urllib3==2.6.0
 icalendar==5.0.9
 python-dotenv==1.0.0
 google-api-python-client==2.101.0
